@@ -25,8 +25,8 @@ public class SprintService {
     public ResponseDto createSprint(SprintRequestDto sprintRequestDto) {
         ResponseDto responseDto= new ResponseDto();
         Sprint sprint= sprintRepository.findByName(sprintRequestDto.getName()).orElse(null);
-        Optional<Project> project= Optional.of(projectRepository.getById(sprintRequestDto.getProjectId()));
-        if(project.isEmpty()){
+        Project project= projectRepository.findById(sprintRequestDto.getProjectId()).orElse(null);
+        if(project==null){
             responseDto.setStatusCode(Constants.FAILED_CODE);
             responseDto.setStatus(Constants.FAILED);
             responseDto.setMessage("Project entered is not found!");
@@ -36,7 +36,7 @@ public class SprintService {
             Sprint sprint1= new Sprint();
             sprint1.setName(sprintRequestDto.getName());
             sprint1.setCreatedDate(LocalDate.now());
-            sprint1.setProject(project.get());
+            sprint1.setProject(project);
             Sprint savedSprint= sprintRepository.save(sprint1);
             responseDto.setMessage("Sprint added successfully");
             responseDto.setData(savedSprint);

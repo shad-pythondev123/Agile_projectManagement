@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ProjectUserRequest {
  private Long userId;
- private String projectId;
+ private Long projectId;
  private boolean isAdmin;
 }

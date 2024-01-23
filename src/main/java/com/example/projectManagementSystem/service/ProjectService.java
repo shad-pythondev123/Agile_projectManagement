@@ -3,14 +3,11 @@ package com.example.projectManagementSystem.service;
 import com.example.projectManagementSystem.constant.Constants;
 import com.example.projectManagementSystem.dto.ProjectRequestDto;
 import com.example.projectManagementSystem.dto.ResponseDto;
-//import com.example.projectManagementSystem.model.ProjectUser;
 import com.example.projectManagementSystem.model.Project;
 import com.example.projectManagementSystem.model.ProjectUser;
 import com.example.projectManagementSystem.model.ProjectUserId;
 import com.example.projectManagementSystem.model.User;
 import com.example.projectManagementSystem.repository.ProjectRepository;
-//import com.example.projectManagementSystem.Repository.ProjectUserRepository;
-//import com.example.projectManagementSystem.repository.ProjectUserRepository;
 import com.example.projectManagementSystem.repository.ProjectUserRepository;
 import com.example.projectManagementSystem.repository.UserRepository;
 
@@ -18,8 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.Optional;
 
 @Service
 public class ProjectService {

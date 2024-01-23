@@ -1,10 +1,10 @@
 package com.example.projectManagementSystem.model;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
@@ -13,8 +13,8 @@ import java.time.LocalDate;
 @Data
 public class Sprint {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "createdDate")
     private LocalDate createdDate;

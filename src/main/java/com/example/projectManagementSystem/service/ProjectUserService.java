@@ -34,7 +34,7 @@ public class ProjectUserService {
         ResponseDto responseDto= new ResponseDto();
         Utility utility= new Utility();
         String userName= utility.getUserName();
-        Project project= projectRepository.getById(projectUserRequest.getProjectId());
+        Project project= projectRepository.getOne(projectUserRequest.getProjectId());
         if(project==null){
             responseDto.setMessage("Project not Found!");
             responseDto.setStatusCode(Constants.FAILED_CODE);
@@ -42,8 +42,8 @@ public class ProjectUserService {
             responseDto.setData(project);
             return responseDto;
         }
-        Optional<User> user= userRepository.findById(projectUserRequest.getUserId());
-        if(user.isEmpty()){
+        User user= userRepository.findById(projectUserRequest.getUserId()).orElse(null);
+        if(user==null){
             responseDto.setMessage(Constants.USER_NOT_FOUND);
             responseDto.setStatusCode(Constants.USERNAME_NOT_UNIQUE_CODE);
             responseDto.setStatus(Constants.USER_NOT_FOUND);
@@ -60,7 +60,7 @@ public class ProjectUserService {
                 projectUser.setAdmin(projectUserRequest.isAdmin());
                 ProjectUserId projectUserId = new ProjectUserId();
                 projectUserId.setProjectId(project.getId());
-                projectUserId.setUserId(user.get().getId());
+                projectUserId.setUserId(user.getId());
                 projectUser.setId(projectUserId);
                 projectUser.setCreatedDate(LocalDate.now());
                 ProjectUser savedProjectUser = projectUserRepository.save(projectUser);
@@ -78,7 +78,14 @@ public class ProjectUserService {
     public ResponseDto getProjectFromUserId(Long userId){
         ResponseDto responseDto= new ResponseDto();
         List<ProjectUser> projectUsers= projectUserRepository.getAllById(userId);
-        List<String> projects= new ArrayList<>();
+        if(projectUsers.size()==0){
+            responseDto.setData(null);
+            responseDto.setStatus(Constants.FAILED);
+            responseDto.setStatusCode(Constants.FAILED_CODE);
+            responseDto.setMessage("No Projects for this user!");
+            return responseDto;
+        }
+        List<Long> projects= new ArrayList<>();
         for(ProjectUser p:projectUsers){
             projects.add(p.getId().getProjectId());
         }

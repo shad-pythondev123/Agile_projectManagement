@@ -5,24 +5,23 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Serializable;
 import java.security.Key;
+import java.security.SignatureException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,12 +51,7 @@ public class JwtUtil extends OncePerRequestFilter {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts
-                .parserBuilder()
-                .setSigningKey(getSignKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        return Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody();
     }
 
     private Boolean isTokenExpired(String token) {
@@ -80,42 +74,38 @@ public class JwtUtil extends OncePerRequestFilter {
                 .setSubject(userName)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis()+1000*JWT_TOKEN_VALIDITY))
-                .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
+                .signWith(SignatureAlgorithm.HS512,SECRET).compact();
     }
 
-    private Key getSignKey() {
-        byte[] keyBytes= Decoders.BASE64.decode(SECRET);
-        return Keys.hmacShaKeyFor(keyBytes);
-    }
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
-        String token = extractToken(request);
-
-        if (token != null) {
-            try{
-                String username= extractUsername(token);
-                if(username!=null && SecurityContextHolder.getContext().getAuthentication()==null){
-                    UserDetails userDetails=userDetailsService.loadUserByUsername(username);
-                    validateToken(token, userDetails);
-                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities());
-                    usernamePasswordAuthenticationToken
-                            .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                }
-
-            }catch (IllegalArgumentException e){
-                System.out.println("Unable to get JWT Token");
-            }catch(ExpiredJwtException e){
-                System.out.println("JWT Token has expired");
-            }
-
-
-        }
-
-        filterChain.doFilter(request, response);
-    }
+//    @Override
+//    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+//            throws ServletException, IOException {
+//        String token = extractToken(request);
+//
+//        if (token != null) {
+//            try{
+//                String username= extractUsername(token);
+//                if(username!=null && SecurityContextHolder.getContext().getAuthentication()==null){
+//                    UserDetails userDetails=userDetailsService.loadUserByUsername(username);
+//                    validateToken(token, userDetails);
+//                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+//                            userDetails, null, userDetails.getAuthorities());
+//                    usernamePasswordAuthenticationToken
+//                            .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+//                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+//                }
+//
+//            }catch (IllegalArgumentException e){
+//                System.out.println("Unable to get JWT Token");
+//            }catch(ExpiredJwtException e){
+//                System.out.println("JWT Token has expired");
+//            }
+//
+//
+//        }
+//
+//        filterChain.doFilter(request, response);
+//    }
 
     private String extractToken(HttpServletRequest request) {
         String header = request.getHeader("Authorization");
@@ -128,4 +118,32 @@ public class JwtUtil extends OncePerRequestFilter {
     }
 
 
+    @Override
+    protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException{
+        String token = extractToken(httpServletRequest);
+
+        if (token != null) {
+            try{
+                String username= extractUsername(token);
+                if(username!=null && SecurityContextHolder.getContext().getAuthentication()==null){
+                    UserDetails userDetails=userDetailsService.loadUserByUsername(username);
+                    validateToken(token, userDetails);
+                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
+                    usernamePasswordAuthenticationToken
+                            .setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
+                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                }
+
+            }catch (IllegalArgumentException e){
+                System.out.println("Unable to get JWT Token");
+            }catch(ExpiredJwtException e){
+                System.out.println("JWT Token has expired");
+            }
+
+
+        }
+
+        filterChain.doFilter(httpServletRequest, httpServletResponse);
+    }
 }

@@ -1,12 +1,9 @@
 package com.example.projectManagementSystem.model;
 
-import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.FieldDefaults;
 
+import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -14,8 +11,8 @@ import java.util.List;
 @Data
 public class Project {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private String name;
     private String description;

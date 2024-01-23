@@ -1,11 +1,8 @@
 package com.example.projectManagementSystem.model;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.io.Serializable;
+import javax.persistence.*;
 import java.time.LocalDate;
 
 

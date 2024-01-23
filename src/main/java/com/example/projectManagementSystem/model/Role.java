@@ -1,9 +1,10 @@
 package com.example.projectManagementSystem.model;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
 
 @Entity
 @AllArgsConstructor
@@ -11,8 +12,8 @@ import lombok.NoArgsConstructor;
 @Data
 public class Role {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String roleId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long roleId;
 
     @Column(name = "role_name")
     private String roleName;

@@ -8,8 +8,6 @@ import com.example.projectManagementSystem.model.User;
 import com.example.projectManagementSystem.service.UserServiceImpl;
 import com.example.projectManagementSystem.service.jwt.UserDetailsServiceImpl;
 import com.example.projectManagementSystem.utility.JwtUtil;
-import io.jsonwebtoken.io.IOException;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
@@ -42,7 +41,7 @@ public class UserController {
          return userService.createUser(signupRequest);
     }
     @PostMapping("/authentication")
-    public AuthenticationResponse createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest, HttpServletResponse response) throws BadCredentialsException, DisabledException, UsernameNotFoundException, IOException, java.io.IOException {
+    public AuthenticationResponse createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest, HttpServletResponse response) throws BadCredentialsException, DisabledException, UsernameNotFoundException, java.io.IOException {
         try{
                 authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword()));
         }catch(BadCredentialsException ex){

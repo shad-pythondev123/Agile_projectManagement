@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface SprintRepository extends JpaRepository<Sprint, String> {
+public interface SprintRepository extends JpaRepository<Sprint, Long> {
     @Query("SELECT s FROM Sprint s WHERE s.name like :name")
    Optional<Sprint> findByName(@Param("name") String name);
 }

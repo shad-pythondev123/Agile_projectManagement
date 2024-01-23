@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 @Data
 public class SprintRequestDto {
     String name;
-    String projectId;
+    Long projectId;
 }

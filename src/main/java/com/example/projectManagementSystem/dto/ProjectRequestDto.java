@@ -1,6 +1,5 @@
 package com.example.projectManagementSystem.dto;
 
-import jakarta.persistence.Column;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
